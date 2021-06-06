@@ -1,7 +1,9 @@
+import React from 'react';
 import Modal from 'react-modal';
 import { useForm } from 'react-hook-form';
-import {FiX} from 'react-icons/fi';
+import { FiX } from 'react-icons/fi';
 import { Container, Error } from './styles';
+import api from '../../services/api';
 
 interface NewCourseUnityProps {
     isOpen: boolean;
@@ -15,9 +17,9 @@ interface NewCourseUnityData {
 
 export function NewCourseUnityModal({isOpen, onRequestClose}:NewCourseUnityProps){
 
-    const {register, handleSubmit, formState: {errors}} = useForm();
+    const {register, handleSubmit, formState: {errors}} = useForm<NewCourseUnityData>();
 
-    const onSubmit = handleSubmit(data => alert(JSON.stringify(data)));
+    const onSubmit = handleSubmit(data => api.post('/courseunity', data).then(onRequestClose));
 
     return (
         <Modal
@@ -48,6 +50,9 @@ export function NewCourseUnityModal({isOpen, onRequestClose}:NewCourseUnityProps
                         {... register('description', {required:true})}
                     />
                     {errors.description && <Error>O preenchimento do campo é obrigatório.</Error>}
+                    <button type='submit'>
+                        Cadastrar
+                    </button>
                 </form>
             </Container>
 

@@ -1,7 +1,36 @@
+import { useEffect, useState } from 'react';
 import {Container} from './styles';
 import {GoFile, GoNote, GoGraph} from 'react-icons/go';
+import api from '../../services/api';
+
+interface Activy {
+    id: string;
+    name: string;
+    grade: number;
+    activy_date: Date;
+}
+
+interface CourseUnity {
+    id: string;
+    name: string;
+    description: string;
+}
 
 export function Summary(){
+
+    const [activies, setActivies] = useState<Activy[]>([])
+    const [courseUnities, setCourseUnities] = useState<CourseUnity[]>([])
+
+    useEffect(() => {
+
+        api.get('/activy').then(response => setActivies(response.data))
+    },[])
+    
+    useEffect(() => {
+
+        api.get('/courseunity').then(response => setCourseUnities(response.data))
+    },[])
+
     return (
         <Container>
             <div>
@@ -10,16 +39,16 @@ export function Summary(){
                     <GoFile size={40} />
                 </header>
                 <strong>
-                    25
+                    {courseUnities.length}
                 </strong>
             </div>
             <div>
                 <header>
                     <p>Atividades</p>
-                    <GoNote size={40} />
+                    <GoNote size={45} />
                 </header>
                 <strong>
-                    80
+                    {activies.length}
                 </strong>
             </div>
             <div className = 'highlight-background'>
@@ -28,7 +57,9 @@ export function Summary(){
                     <GoGraph size={40} />
                 </header>
                 <strong>
-                    9.17
+                    {Number(activies.reduce((average, activies) => {
+                        return average + Number(activies.grade)
+                    },0)/activies.length).toFixed(2)}
                 </strong>
             </div>
         </Container>
